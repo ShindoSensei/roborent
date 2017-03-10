@@ -79,7 +79,9 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: project-3-xavgekjus_production
-  username: project-3-xavgekjus
-  password: <%= ENV['PROJECT-3-XAVGEKJUS_DATABASE_PASSWORD'] %>
+  # <<: *default
+  # password: <%= ENV['PROJECT-3-XAVGEKJUS_DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  url: <%= ENV['DATABASE_URL']%>
+  database: d8f4n7jjdbr6dk
+  # username: project-3-xavgekjus
