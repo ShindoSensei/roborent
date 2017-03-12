@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: { registrations: "users/registrations" }
 
-  get 'property/index'
+  # get 'property/index'
 
   root 'static#homepage'
 
