@@ -10,6 +10,12 @@ class ShortlistsController < ApplicationController
   def create
     @shortlist = Shortlist.create property_id:params[:prop_id], user_id:current_user.id
     # Shortlist.create automatically pushes this new shortlist to the property's & user's array
+    @current_prop = Property.find(params[:prop_id])
+
+    respond_to do |format|
+      format.html { redirect_to @current_prop, notice: 'Property successfully added to shortlist.' }
+      format.json { head :no_content }
+    end
   end
 
   def destroy
@@ -17,7 +23,7 @@ class ShortlistsController < ApplicationController
     @shortlists = @user.shortlists
     @properties = Property.all
     respond_to do |format|
-      format.html { render :index, notice: 'Property successfully removed from shortlist.' }
+      format.html { render :_index, notice: 'Property successfully removed from shortlist.' }
       format.json { head :no_content }
     end
   end

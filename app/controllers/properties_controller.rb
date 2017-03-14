@@ -69,7 +69,7 @@ class PropertiesController < ApplicationController
     @listings = current_user.properties
     @properties = Property.all
     respond_to do |format|
-      format.html { render :listings, notice: 'Property was successfully de-listed.' }
+      format.html { render :_listings, notice: 'Property was successfully de-listed.' }
       format.json { head :no_content }
     end
   end

@@ -10,7 +10,7 @@
   <%= @property.lease_durn %> months lease
   <%= @property.property_type %>
   <%= @property.rent_area %>
-  <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), class:'btn btn-primary' %>
+  <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), :method => :post, class:'btn btn-primary' %>
 </div>
 <div class="container">
   <strong>Description</strong><br>
