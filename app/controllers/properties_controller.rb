@@ -43,12 +43,12 @@ class PropertiesController < ApplicationController
   end
 
   def update #To do put request to edit property
+    if !params[:property][:photo_url].blank?
+      uploaded_file = params[:property][:photo_url].path
+      cloudinary_file = Cloudinary::Uploader.upload(uploaded_file)
+      @property.photo_url = cloudinary_file['public_id']
+    end
     respond_to do |format|
-      if !params[:property][:photo_url].blank?
-        uploaded_file = params[:property][:photo_url].path
-        cloudinary_file = Cloudinary::Uploader.upload(uploaded_file)
-        @property.photo_url = cloudinary_file['public_id']
-      end
       if @property.update(property_params)
         format.html {redirect_to @property, notice: 'Property listing was updated successfully.'}
         format.json {render :show, status: :created, location: @property}
