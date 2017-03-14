@@ -1,0 +1,18 @@
+<%= bootstrap_form_for(@property) do |f| %>
+  <div class='row'>
+      <div class='col-md-6'><%= f.text_field :address, label: 'Address:', placeholder: 'address'%></div>
+      <div class='col-md-3'><%= f.text_field :postcode, label: 'Postal code:', placeholder: 'postal code' %></div>
+    </div>
+  <div class='row'>
+    <div class='col-md-3'><%= f.text_field :price, label: 'Rental price per month (S$):', placeholder: 'eg. 500'%></div>
+    <div class='col-md-3'><%= f.text_field :lease_durn, label: 'Lease duration (months):', placeholder: 'eg. 6'%></div>
+  </div>
+  <div class='row'>
+    <div class='col-md-3'><%= f.select :property_type, [["Condominium", "Condominium"], ["HDB", "HDB"], ["Service apartment", "Service apartment"], ["Landed Property", "Landed Property"]], { label: "Property type:" }%></div>
+    <div class='col-md-3'><%= f.select :rent_area, [["1 bedroom", "1 bedroom"], ["1 master bedroom", "1 master bedroom"], ["Whole unit", "Whole unit"]], {label: "Area of rent:"} %></div>
+  </div>
+  <%= f.text_area :description, label: 'Description:', placeholder: 'description'%>
+  <%= f.collection_check_boxes :amenity_ids, Amenity.all, :id, :name, label: 'Amenities:', inline: true %>
+    <%= f.file_field :photo_url, label: "Upload photo:" %>
+    <%= f.submit "Submit" %>
+  <%end%>
