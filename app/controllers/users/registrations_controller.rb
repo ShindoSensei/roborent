@@ -24,7 +24,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # puts account_update_params
 
     # @user.update(update_params)
-
+    # def listings
+    #   @listings = current_user.properties
+    #   @properties = Property.all
+    #   #Rails automatically receives incoming ajax js request and knows to look for corresponding .js.erb file in views/registrations/listings.js.erb  instead of a .html.erb file.
+    # end
 
     # User.update(current_user.id, :phone => )
   # end

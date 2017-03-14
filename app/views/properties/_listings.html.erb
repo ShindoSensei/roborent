@@ -1,0 +1,20 @@
+<h1>Listings</h1>
+
+<% @listings.each do |prop| %>
+  <div class="col-md-3">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%=@properties.find(prop.id).address%></h3>
+      </div>
+      <div class="panel-body">
+        <a href=<%="/properties/"+prop.id.to_s%>>
+          <img src=<%=@properties.find(prop.id).photo_url%> alt="Property Pic" style="width:220px; height:150px;">
+        </a>
+        <p>Price: $<%=@properties.find(prop.id).price%>/month</p>
+        <p>Popularity: <%=@properties.find(prop.id).shortlists.length%></p>
+        <%= link_to("Edit Property", '/properties/'+prop.id.to_s+'/edit',class: "btn btn-primary btn-xs")%>
+        <%= link_to("Remove", '/properties/'+prop.id.to_s, method: :delete, class: "btn btn-danger btn-xs")%>
+      </div>
+    </div>
+  </div>
+<%end%>

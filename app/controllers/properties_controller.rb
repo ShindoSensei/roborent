@@ -35,6 +35,7 @@ class PropertiesController < ApplicationController
 
   def edit  #To render page where you can edit property
 #No need anything here, because before_action executed with set_property @property and auto route to /edit page
+
   end
 
   def update #To do put request to edit property
@@ -52,14 +53,17 @@ class PropertiesController < ApplicationController
 
   def destroy  #To delete listed property
     @property.destroy
+    @listings = current_user.properties
+    @properties = Property.all
     respond_to do |format|
-      format.html { redirect_to properties_url, notice: 'Property was successfully de-listed.' }
+      format.html { render :listings, notice: 'Property was successfully de-listed.' }
       format.json { head :no_content }
     end
   end
 
   def listings
     @listings = current_user.properties
+    @properties = Property.all
   end
 
   private
