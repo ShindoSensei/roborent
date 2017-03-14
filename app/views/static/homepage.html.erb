@@ -1,3 +1,26 @@
 
 <!-- <button><%=link_to "Log out", destroy_user_session_path, method: :delete%></button> -->
 <h1> Welcome to homepage</h1>
+
+<h3>Popular Properties</h3>
+
+
+<h3>Recent Properties</h3>
+
+  <%= @recent_properties.each do |property| %>
+  <div class="col-md-4">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title"><%=property.address%></h3>
+    </div>
+    <div class="panel-body">
+      <div class='container'><%= cl_image_tag(property.photo_url, :width => 200, :height => 150) %></div>
+      <br><br>
+      <p>Rental: $<%=property.price%>/mth for <%=property.rent_area%></p>
+      <%= link_to 'View Details', property_path(property) %>
+    </div>
+  </div>
+</div>
+  <%end%>
+
+  <%= @recent_properties.to_a %>
