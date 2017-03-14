@@ -1,2 +1,12 @@
 <h1>Properties#show</h1>
 <p>Find me in app/views/properties/show.html.erb</p>
+
+<p>address: <%= @property.address %></p>
+<p>postcode: <%= @property.postcode %></p>
+<p>price: <%= @property.price %></p>
+<p>property_type: <%= @property.property_type %></p>
+<p>rent_area: <%= @property.rent_area %></p>
+
+<%= cl_image_tag(@property.photo_url) %>
+
+<%= @property.amenities.to_a %>

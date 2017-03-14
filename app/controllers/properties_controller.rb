@@ -13,13 +13,19 @@ class PropertiesController < ApplicationController
   def new  #To render page where you can create property
     @property = Property.new
     #RAILS AUTOMATICALLY renders view in properties/new!
-    @amenities = Amenity.all
   end
 
   def create  #To do post request to create property
     @property = Property.new(property_params)
-    # @property.amenities.push(#capture form id1)
 
+    if params[:property][:photo_url].blank?
+      @property.photo_url = "mvrusk60tp4vn9tbpmui"
+    else
+      uploaded_file = params[:property][:photo_url].path
+      cloudinary_file = Cloudinary::Uploader.upload(uploaded_file)
+      @property.photo_url = cloudinary_file['public_id']
+    end
+      @property.user_id = current_user.id
     respond_to do |format|
       if @property.save
       format.html {redirect_to @property, notice: 'Property was successfully listed.'}
@@ -29,7 +35,6 @@ class PropertiesController < ApplicationController
       format.json {render json: @property.errors, status: :unprocessable_entity}
       end
     end
-
   end
 
 
@@ -38,14 +43,18 @@ class PropertiesController < ApplicationController
   end
 
   def update #To do put request to edit property
-
     respond_to do |format|
+      if !params[:property][:photo_url].blank?
+        uploaded_file = params[:property][:photo_url].path
+        cloudinary_file = Cloudinary::Uploader.upload(uploaded_file)
+        @property.photo_url = cloudinary_file['public_id']
+      end
       if @property.update(property_params)
-      format.html {redirect_to @property, notice: 'Property listing was updated successfully.'}
-      format.json {render :show, status: :created, location: @property}
+        format.html {redirect_to @property, notice: 'Property listing was updated successfully.'}
+        format.json {render :show, status: :created, location: @property}
       else
-      format.html {render :edit}
-      format.json {render json: @property.errors, status: :unprocessable_entity}
+        format.html {render :edit}
+        format.json {render json: @property.errors, status: :unprocessable_entity}
       end
     end
   end
@@ -70,7 +79,7 @@ class PropertiesController < ApplicationController
   end
 
   def property_params
-    params.require(:property).permit(:address, :postcode, :price, :description, :lease_durn, :property_type, :rent_area, :photo_url, :amenity_ids =>[])
+    params.require(:property).permit(:address, :postcode, :price, :description, :lease_durn, :property_type, :rent_area,  :user_id, amenity_ids:[])
   end
 
 end
