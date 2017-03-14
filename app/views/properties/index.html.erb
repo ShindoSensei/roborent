@@ -1,2 +1,48 @@
-<h1>Properties#index</h1>
-<p>Find me in app/views/properties/index.html.erb</p>
+<div class="col-md-6">
+  <h2>Listings Found: </h2>
+  <br>
+    <form>
+      <input type="text" placeholder="Search">
+      <button type="submit" class="btn btn-default btn-xs">Go</button>
+    </form>
+    <br>
+
+  <div class="dropdown">
+    <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      Sort By
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <li><a href="#">Lowest Price</a></li>
+      <li><a href="#">Highest Price</a></li>
+      <li><a href="#">Recency</a></li>
+      <li><a href="#">Popularity</a></li>
+    </ul>
+  </div>
+  <br>
+
+  <%@properties.each do |prop|%>
+    <div class="row">
+
+      <div class="col-md-4">
+        <img src=<%=prop.photo_url%> alt="Property Pic" style="width:100%; height:100px;">
+      </div>
+
+      <div class="col-md-4">
+        <p><%=prop.address%></p>
+        <p><%=prop.property_type%></p>
+        <p>Popularity: <%=prop.shortlists.length%></p>
+      </div>
+
+      <div class="col-md-4">
+        <p><b>$<%=prop.price%>/month</b></p>
+      </div>
+
+    </div>
+    <br>
+  <%end%>
+
+</div>
+<div class="col-md-6">
+  <h1>Google Map API</h1>
+</div>
