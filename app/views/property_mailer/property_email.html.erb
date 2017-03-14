@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+  <body>
+    <p>
+      <strong>Hi <%= @property.user.first_name %>,</strong><br>
+      You have received an inquiry regarding your listed property at <%= @property.address %>, Singapore <%= @property.postcode %> from <%= @current_user.first_name %>:
+      <br>
+      <%= @message %>
+    </p>
+    <p>
+      You may reply <%= @current_user.first_name %> at his email address, <%=@current_user.email %>. Thank you and have a great day!
+    </p>
+  </body>
+</html>

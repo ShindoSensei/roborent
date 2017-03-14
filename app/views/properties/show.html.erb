@@ -23,5 +23,9 @@
   <% end %>
 </div>
 <div class="container">
-  <strong>Contact Owner</strong>
+  <strong>Contact Owner</strong><br>
+  <%= form_tag (contact_owner_path) do %>
+  <%= text_area_tag :body %>
+  <%= submit_tag "Submit", class: "btn btn-primary" %>
+  <% end %>
 </div>

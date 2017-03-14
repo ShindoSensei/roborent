@@ -1,0 +1,8 @@
+Hi <%= @user.first_name %>,
+===============================================
+
+You have received an inquiry regarding your listed property at <%= @property.address %>, Singapore <%= @property.postcode %> from <%= @current_user.first_name %>:
+
+<%= @message %>
+
+You may reply <%= @current_user.first_name %> at his email address, <%=@current_user.email %>. Thank you and have a great day!

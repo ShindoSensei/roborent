@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'shortlists/index'
   delete '/shortlists/:id', to: 'shortlists#destroy'
   post 'shortlists', to:'shortlists#create'
+  post '/properties/:id', to: 'properties#contact_owner', as: 'contact_owner'
 
 
   # resources :shortlists

@@ -1,5 +1,5 @@
 class PropertiesController < ApplicationController
-  before_action :set_property, only: [:show, :edit, :update, :destroy]
+  before_action :set_property, only: [:show, :edit, :update, :destroy, :contact_owner]
   before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   def index  #To render page showing ALL properties
     @properties = Property.all
@@ -60,6 +60,14 @@ class PropertiesController < ApplicationController
 
   def listings
     @listings = current_user.properties
+  end
+
+  def contact_owner
+    p @property
+    p current_user
+    PropertyMailer.property_email(@property.user, params[:body], @property, current_user).deliver
+    flash[:notice] = 'Message sent'
+    redirect_to property_path
   end
 
   private
