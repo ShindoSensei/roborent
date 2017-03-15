@@ -15,6 +15,7 @@ class ShortlistsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @current_prop, notice: 'Property successfully added to shortlist.' }
       format.json { head :no_content }
+      format.js {}
     end
   end
 
@@ -22,9 +23,11 @@ class ShortlistsController < ApplicationController
     Shortlist.find(params[:id]).destroy
     @shortlists = @user.shortlists
     @properties = Property.all
+    @property = Property.find(params[:prop_id])
     respond_to do |format|
       format.html { render :_index, notice: 'Property successfully removed from shortlist.' }
       format.json { head :no_content }
+      format.js {}
     end
   end
 

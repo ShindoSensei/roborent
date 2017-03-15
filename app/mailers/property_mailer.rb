@@ -6,6 +6,6 @@ class PropertyMailer < ApplicationMailer
     @message = message
     @property = property
     @current_user = current_user
-    mail(to: @user, subject: 'Inquiry on listed property')
+    mail(to: @user.email, subject: 'Inquiry on listed property')
   end
 end

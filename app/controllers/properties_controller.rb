@@ -80,8 +80,8 @@ class PropertiesController < ApplicationController
   end
 
   def contact_owner
-    p @property
-    p current_user
+    p @property.user
+    # p current_user
     PropertyMailer.property_email(@property.user, params[:body], @property, current_user).deliver
     flash[:notice] = 'Message sent'
     redirect_to property_path
