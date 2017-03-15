@@ -1,11 +1,14 @@
+
+
+
 <div class="col-md-6">
   <h2>Listings Found: </h2>
 
-    <form>
-      <input type="text" placeholder="Search">
-      <button type="submit" class="btn btn-primary btn-xs">Go</button>
-    </form>
-    <br>
+    <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
+    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
+  <% end %>
+<br><br>
 
   <div class="btn-group sortButton">
           <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -21,16 +24,20 @@
   <br><br>
 
   <div class="propPanel "style="overflow-y: scroll; height:350px;">
+    <% if @properties.blank? %>
+    <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
+  <% end %>
     <%@properties.each do |prop|%>
       <div class="row sortProps" style="margin-bottom: 25px;">
 
         <div class="col-md-4">
-          <div class="imagePlaceHolder" style="width:100%; height:147px; border-style:solid;">Image Placeholder</div>
+          <%= cl_image_tag(prop.photo_url, :width => 180, :height => 150, :alt => "Property Pic") %>
         </div>
         <div class="col-md-4">
           <p><b><%=prop.address%></b></p>
           <p>S'pore <%=prop.postcode%></p>
           <p><%=prop.property_type%>, <%=prop.rent_area%></p>
+
 
           <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
         </div>
@@ -51,6 +58,3 @@
   <h2>Google Map API</h2>
   <%= image_tag("map", height: '450px', width: '550px') %>
 </div>
-
-<script   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
-</script>
