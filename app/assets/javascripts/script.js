@@ -1,5 +1,6 @@
 /* global $ */
-$(document).ready(function () {
+$(document).on('turbolinks:load', function () {
+  console.log('loaded')
   function sortAscPrice (e) {
     e.preventDefault()
     var $propDivs = $('.sortProps')
