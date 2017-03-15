@@ -1,48 +1,53 @@
 <div class="col-md-6">
   <h2>Listings Found: </h2>
-  <br>
+
     <form>
       <input type="text" placeholder="Search">
-      <button type="submit" class="btn btn-default btn-xs">Go</button>
+      <button type="submit" class="btn btn-primary btn-xs">Go</button>
     </form>
     <br>
 
-  <div class="dropdown">
-    <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      Sort By
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-      <li><a href="#">Lowest Price</a></li>
-      <li><a href="#">Highest Price</a></li>
-      <li><a href="#">Recency</a></li>
-      <li><a href="#">Popularity</a></li>
-    </ul>
+  <div class="btn-group sortButton">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sort<span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" class = "lowPrice">Lowest Price</a></li>
+            <li><a href="#" class = "highPrice">Highest Price</a></li>
+            <li><a href="#" class = "recency">Recency</a></li>
+            <li><a href="#" class = "popularity">Popularity</a></li>
+          </ul>
+        </div>
+  <br><br>
+
+  <div class="propPanel "style="overflow-y: scroll; height:350px;">
+    <%@properties.each do |prop|%>
+      <div class="row sortProps" style="margin-bottom: 25px;">
+
+        <div class="col-md-4">
+          <div class="imagePlaceHolder" style="width:100%; height:147px; border-style:solid;">Image Placeholder</div>
+        </div>
+        <div class="col-md-4">
+          <p><b><%=prop.address%></b></p>
+          <p>S'pore <%=prop.postcode%></p>
+          <p><%=prop.property_type%>, <%=prop.rent_area%></p>
+
+          <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
+        </div>
+        <div class="col-md-4">
+          <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
+          <p>Popularity: <span class="propPop"><%=prop.shortlists.length%></span></p>
+          <p style="display:none;"class="propTime">
+            <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
+          <p>
+        </div>
+
+      </div>
+
+    <%end%>
   </div>
-  <br>
-
-  <%@properties.each do |prop|%>
-    <div class="row">
-
-      <div class="col-md-4">
-        <img src=<%=prop.photo_url%> alt="Property Pic" style="width:100%; height:100px;">
-      </div>
-
-      <div class="col-md-4">
-        <p><%=prop.address%></p>
-        <p><%=prop.property_type%></p>
-        <p>Popularity: <%=prop.shortlists.length%></p>
-      </div>
-
-      <div class="col-md-4">
-        <p><b>$<%=prop.price%>/month</b></p>
-      </div>
-
-    </div>
-    <br>
-  <%end%>
-
 </div>
 <div class="col-md-6">
-  <h1>Google Map API</h1>
+  <h2>Google Map API</h2>
+  <%= image_tag("map", height: '450px', width: '550px') %>
 </div>
