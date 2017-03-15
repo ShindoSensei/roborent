@@ -8,7 +8,7 @@
       </div>
       <div class="panel-body">
         <a href=<%="/properties/"+prop.id.to_s%>>
-          <img src=<%=@properties.find(prop.id).photo_url%> alt="Property Pic" style="width:220px; height:150px;">
+          <%= cl_image_tag(@properties.find(prop.id).photo_url, :width => 220, :height => 150, :alt => "Property Pic") %>
         </a>
         <p>Price: $<%=@properties.find(prop.id).price%>/month</p>
         <p>Popularity: <%=@properties.find(prop.id).shortlists.length%></p>

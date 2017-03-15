@@ -1,11 +1,16 @@
 <div class="col-md-6">
   <h2>Listings Found: </h2>
-  <br>
+  <!-- <br>
     <form>
       <input type="text" placeholder="Search">
       <button type="submit" class="btn btn-default btn-xs">Go</button>
     </form>
-    <br>
+    <br> -->
+    <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
+    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
+  <% end %>
+<br><br>
 
   <div class="dropdown">
     <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -21,11 +26,15 @@
   </div>
   <br>
 
+  <% if @properties.blank? %>
+  <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
+<% end %>
+
   <%@properties.each do |prop|%>
     <div class="row">
 
       <div class="col-md-4">
-        <img src=<%=prop.photo_url%> alt="Property Pic" style="width:100%; height:100px;">
+        <%= cl_image_tag(prop.photo_url, :width => 220, :height => 150, :alt => "Property Pic") %>
       </div>
 
       <div class="col-md-4">

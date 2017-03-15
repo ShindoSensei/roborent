@@ -8,6 +8,11 @@ class PropertiesController < ApplicationController
     @prop_recent = Property.order('created_at DESC')
     @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
 
+    if params[:search]
+      @properties = Property.search(params[:search]).order("created_at DESC")
+    else
+      @properties = Property.all.order("created_at DESC")
+    end
   end
 
   def show  #To render page of select property
