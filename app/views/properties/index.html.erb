@@ -22,7 +22,7 @@
 
   <div class="propPanel "style="overflow-y: scroll; height:350px;">
     <% if @properties.blank? %>
-    <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
+    <h4>There are no properties containing the address or property type <%= params[:search] %>.</h4>
   <% end %>
     <%@properties.each do |prop|%>
       <div class="row sortProps" style="margin-bottom: 25px;">
@@ -66,14 +66,17 @@
   function initMap() {
     var map;
     var markerArray = []
+    var disableShowHide = false;
 
-    if(<%=@center_map%>){
+    if(<%= @center_map %>){
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 11,
-        center: {lat: 1.384323,lng: 103.826093}
+        center: {lat: 1.3046,lng: 103.8319}
+        // center: {lat: 1.384323,lng: 103.826093}
       });
     }
     else{
+      console.log(<%= @center_map %>)
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
@@ -81,6 +84,16 @@
     }
     var prev_infowindow =false;
 
+    if(<%=@properties.empty?%>){
+      var marker = new google.maps.Marker({
+        position: {lat:1.3046,lng:103.8319},
+        map: map
+      })
+      var infowindow = new google.maps.InfoWindow({
+        content: "Orchard"
+      })
+    }
+    else{
     <%=@geocode.to_json.html_safe%>.forEach(function(arr){
       var marker = new google.maps.Marker({
         position: {lat:arr[0],lng:arr[1]},
@@ -102,7 +115,6 @@
       //     infowindow.close()
       //   }
       // })
-
       marker.addListener('click', function() {
         if(prev_infowindow) {
              prev_infowindow.close();
@@ -112,17 +124,20 @@
         infowindow.open(map, this)
         var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.hide()
-        $highlightedDiv.show()
+        if(!disableShowHide){
+          $otherDiv.hide()
+          $highlightedDiv.show()
+        }
       })
 
       infowindow.addListener('closeclick', function() {
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
         $otherDiv.show()
-        console.log('closing')
+        console.log('closing infowindow ' )
         // closeWindow = true
       })
     })
+    }
     function centrePin () {
       var $propLatitude = parseFloat($(this).find('.propLat').text())
       var $propLongitude = parseFloat($(this).find('.propLng').text())
@@ -131,32 +146,37 @@
 
       var $propAddress = $(this).find('.propAddr').text()
       var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
-
+      disableShowHide = true
       google.maps.event.trigger(relatedMarker, 'click');
     }
 
     function originalPan(){
-      console.log("original pan!")
-      if(<%=@center_map%>){
-        var $propLatitude = 1.384323
-        var $propLongitude = 103.826093
-      }
-      else{
-        var $propLatitude = <%=@geocode[0][0]%>
-        var $propLongitude = <%=@geocode[0][1]%>
-      }
-      map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
+      // console.log("original pan!")
+      //# if(<%=@center_map%>){
+      //   var $propLatitude = 1.384323
+      //   var $propLongitude = 103.826093
+      // }
+      // else{
+      //   var $propLatitude = <%=@geocode[0][0]%>
+      //   var $propLongitude = <%=@geocode[0][1]%>
+      // }
+      // map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
       var $propAddress = $(this).find('.propAddr').text()
-      var relatedInfoWindow = markerArray.find(function(elm){return elm.includes($propAddress)})[2]
-      google.maps.event.trigger(relatedInfoWindow, 'closeclick');
+      var relatedInfoWindow = markerArray.find(function(elm){
+        return elm.includes($propAddress)
+      })[2]
+
+      disableShowHide = false
+      console.log(relatedInfoWindow)
+      google.maps.event.trigger(relatedInfoWindow, 'closeclick')
+      console.log("closing original pan!")
     }
 
     $(document).on('mouseenter', '.sortProps', {}, centrePin)
     $(document).on('mouseleave', '.sortProps', {}, originalPan)
 
   }
-
 
 </script>
 <script async defer

@@ -4,19 +4,34 @@ class PropertiesController < ApplicationController
 
   def index
     @geocode = []
-    if params[:search]
+
+    if params[:search]#got search
+      p "got search"
+      @center_map = true
       @properties = Property.search(params[:search]).order("created_at")
-      @properties.each do |prop|
-        position = [prop.latitude,prop.longitude,prop.address]
-        @geocode.push(position)
-        if params[:search].empty?
-          @center_map = true
-        else
-          @center_map = false
+
+      if params[:search].empty? #empty search
+        p "got search but empty"
+        @center_map = true
+        @properties = Property.all.order("created_at")
+        @geocode = [[1,3]]
+
+      elsif @properties.empty?  #not empty but jibberish search
+        p "got search but jibberish"
+        @center_map = true
+        @geocode = [[1,3]]
+
+      else #not empty search and not jibberish search, means good search!
+        p "good search"
+        @center_map = false
+        @properties.each do |prop|
+          position = [prop.latitude,prop.longitude,prop.address]
+          @geocode.push(position)
         end
       end
 
-    else
+    else#Not using search at all, just going to page
+      p "Never use search"
       @properties = Property.all.order("created_at")
       @center_map = true
       @properties.each do |prop|
@@ -27,6 +42,9 @@ class PropertiesController < ApplicationController
     if params[:popular] == "string"
       @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
     end
+    @all_properties = []
+    Property.all.each { |p| @all_properties.push(p.address) }
+
   end
 
   def show  #To render page of select property
