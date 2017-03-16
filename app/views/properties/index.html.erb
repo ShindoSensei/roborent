@@ -177,7 +177,7 @@
     $(document).on('mouseenter', '.sortProps', {}, centrePin)
     $(document).on('mouseleave', '.sortProps', {}, originalPan)
 
-
+  }
   var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
       var matches, substringRegex;
@@ -190,7 +190,7 @@
           matches.push(str);
         }
       });
-  }
+
 
       cb(matches);
     };
