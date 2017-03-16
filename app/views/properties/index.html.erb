@@ -23,7 +23,7 @@
     <h2 style="margin-top:10px">Listings Found: </h2>
     <div class="propPanel "style="overflow-y: scroll; height:540px;">
       <% if @properties.blank? %>
-      <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
+      <h4>There are no properties containing the address or property type <%= params[:search] %>.</h4>
       <% end %>
       <%@properties.each do |prop|%>
       <div class="row sortProps" style="margin-bottom: 25px;">
