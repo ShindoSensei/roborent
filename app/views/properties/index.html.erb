@@ -1,10 +1,12 @@
 <div class="col-md-6">
   <h2>Listings Found: </h2>
 
-    <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
-    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
-  <% end %>
+  <div id="suggestions">
+  <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
+  <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control typeahead" %>
+  <%= submit_tag "Search", :name => nil, :class => "btn" %>
+</div>
+<% end %>
 <br>
 
   <div class="btn-group sortButton">
@@ -135,7 +137,32 @@ var map;
   $(document).on('mouseenter', '.sortProps', {}, centrePin)
   // $(document).on('mouseenter', '.sorProps', {}, originalPin)
 
+  var substringMatcher = function(strs) {
+    return function findMatches(q, cb) {
+      var matches, substringRegex;
+      matches = [];
 
+      substrRegex = new RegExp(q, 'i');
+
+      $.each(strs, function(i, str) {
+        if (substrRegex.test(str)) {
+          matches.push(str);
+        }
+      });
+
+      cb(matches);
+    };
+  };
+
+  $('#suggestions .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'all_properties',
+    source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
+  });
 </script>
 <script async defer
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
