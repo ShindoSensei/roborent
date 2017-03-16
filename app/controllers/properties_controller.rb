@@ -14,7 +14,10 @@ class PropertiesController < ApplicationController
         p "got search but empty"
         @center_map = true
         @properties = Property.all.order("created_at")
-        @geocode = [[1,3]]
+        @properties.each do |prop|
+          position = [prop.latitude,prop.longitude,prop.address]
+          @geocode.push(position)
+        end
 
       elsif @properties.empty?  #not empty but jibberish search
         p "got search but jibberish"
