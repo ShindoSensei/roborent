@@ -61,18 +61,23 @@
               <div class="col-md-6">
                 <div id="map" style="height:680px;width:100%;"></div>
               </div>
-
 <script>
 
-var map;
+
   function initMap() {
-    if(<%=@center_map%>){
+    var map;
+    var markerArray = []
+    var disableShowHide = false;
+
+    if(<%= @center_map %>){
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 11,
-        center: {lat: 1.384323,lng: 103.826093}
+        center: {lat: 1.3046,lng: 103.8319}
+        // center: {lat: 1.384323,lng: 103.826093}
       });
     }
     else{
+      console.log(<%= @center_map %>)
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
@@ -80,17 +85,26 @@ var map;
     }
     var prev_infowindow =false;
 
+    if(<%=@properties.empty?%>){
+      var marker = new google.maps.Marker({
+        position: {lat:1.3046,lng:103.8319},
+        map: map
+      })
+      var infowindow = new google.maps.InfoWindow({
+        content: "Orchard"
+      })
+    }
+    else{
     <%=@geocode.to_json.html_safe%>.forEach(function(arr){
-      window['marker'+arr[0]] = new google.maps.Marker({
-      // var marker = new google.maps.Marker({
+      var marker = new google.maps.Marker({
         position: {lat:arr[0],lng:arr[1]},
         map: map
       })
-
-      window['infowindow'+arr[0]] = new google.maps.InfoWindow({
-      // var infowindow = new google.maps.InfoWindow({
+      var infowindow = new google.maps.InfoWindow({
         content: arr[2]
       });
+
+      markerArray.push([marker,arr[2],infowindow])
       // var closeWindow = true
       // marker.addListener('mouseover', function() {
       //     infowindow.setContent(arr[2])
@@ -102,39 +116,67 @@ var map;
       //     infowindow.close()
       //   }
       // })
-      window['marker'+arr[0]].addListener('click', function() {
+      marker.addListener('click', function() {
         if(prev_infowindow) {
              prev_infowindow.close();
           }
-        prev_infowindow = window['infowindow'+arr[0]];
+        prev_infowindow = infowindow
         // closeWindow = false
-        window['infowindow'+arr[0]].open(map, this)
-
+        infowindow.open(map, this)
         var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.hide()
-        $highlightedDiv.show()
+        if(!disableShowHide){
+          $otherDiv.hide()
+          $highlightedDiv.show()
+        }
       })
 
-      window['marker'+arr[0]].addListener('closeclick', function() {
+      infowindow.addListener('closeclick', function() {
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
         $otherDiv.show()
-        console.log('closing')
+        console.log('closing infowindow ' )
         // closeWindow = true
       })
     })
+    }
+    function centrePin () {
+      var $propLatitude = parseFloat($(this).find('.propLat').text())
+      var $propLongitude = parseFloat($(this).find('.propLng').text())
+      // console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
+      map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
-  }
+      var $propAddress = $(this).find('.propAddr').text()
+      var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
+      disableShowHide = true
+      google.maps.event.trigger(relatedMarker, 'click');
+    }
 
-  function centrePin () {
-    var $propLatitude = parseFloat($(this).find('.propLat').text())
-    var $propLongitude = parseFloat($(this).find('.propLng').text())
-    map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
-    console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
-  }
+    function originalPan(){
+      // console.log("original pan!")
+      //# if(<%=@center_map%>){
+      //   var $propLatitude = 1.384323
+      //   var $propLongitude = 103.826093
+      // }
+      // else{
+      //   var $propLatitude = <%=@geocode[0][0]%>
+      //   var $propLongitude = <%=@geocode[0][1]%>
+      // }
+      // map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
-  $(document).on('mouseenter', '.sortProps', {}, centrePin)
-  // $(document).on('mouseenter', '.sorProps', {}, originalPin)
+      var $propAddress = $(this).find('.propAddr').text()
+      var relatedInfoWindow = markerArray.find(function(elm){
+        return elm.includes($propAddress)
+      })[2]
+
+      disableShowHide = false
+      console.log(relatedInfoWindow)
+      google.maps.event.trigger(relatedInfoWindow, 'closeclick')
+      console.log("closing original pan!")
+    }
+
+    $(document).on('mouseenter', '.sortProps', {}, centrePin)
+    $(document).on('mouseleave', '.sortProps', {}, originalPan)
+
 
   var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
@@ -148,6 +190,7 @@ var map;
           matches.push(str);
         }
       });
+  }
 
       cb(matches);
     };
