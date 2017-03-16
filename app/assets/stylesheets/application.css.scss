@@ -64,14 +64,35 @@ textarea#body {
 .field {
   margin-bottom: 10px;
 }
-.container.signup {
+.container.signup-login {
   margin-top: 80px;
   text-align: center;
 }
-.signup-text {
+.signup-login-text {
   width: 600px;
   height: 40px;
   padding: 8px;
+  margin: 4px;
+  font-size: medium;
+}
+input.btn.btn-signup-login {
+  width: 600px;
+  height: 45px;
+  border-radius: 5px;
+  font-size: large;
+  margin: 20px;
+}
+.signup-login-heading {
+  color: #F05F40,
+}
+.properties-index {
+  margin-top: 80px;
+}
+button.btn.btn-sm.dropdown-toggle {
+  background-color: white;
+  border-radius: initial;
+  text-transform: none;
+  font-size: small;
 }
 .tt-input, /* UPDATE: newer versions use tt-input instead of tt-query */
 .tt-hint {
@@ -102,6 +123,8 @@ textarea#body {
    border: 1px solid rgba(0, 0, 0, 0.2);
    border-radius: 8px;
    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+   color: black;
+   text-align: left;
 }
 
 .tt-suggestion {
@@ -112,7 +135,7 @@ textarea#body {
 
 .tt-suggestion.tt-cursor { /* UPDATE: newer versions use .tt-suggestion.tt-cursor */
    color: #fff;
-   background-color: #0097cf;
+   background-color: #F05F40;
 
 }
 

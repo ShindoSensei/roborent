@@ -1,34 +1,36 @@
-<div class="col-md-6">
-  <h2>Listings Found: </h2>
+<div class="properties-index">
 
+  <div class="col-md-6">
+    <div id="suggestions">
     <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
-    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
-  <% end %>
-<br>
+    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control typeahead" %>
+    <span><%= submit_tag "Search", :name => nil, :class => "btn" %></span>
+    </div>
+    <% end %>
+    <br>
 
-  <div class="btn-group sortButton">
-          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Sort<span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#" class = "lowPrice">Lowest Price</a></li>
-            <li><a href="#" class = "highPrice">Highest Price</a></li>
-            <li><a href="#" class = "recency">Recency</a></li>
-            <li><a href="#" class = "popularity">Popularity</a></li>
-          </ul>
-        </div>
-  <br><br>
-
-  <div class="propPanel "style="overflow-y: scroll; height:350px;">
-    <% if @properties.blank? %>
-    <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
-  <% end %>
-    <%@properties.each do |prop|%>
+    <div class="btn-group sortButton">
+      <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort by: &nbsp; <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="#" class = "lowPrice">Lowest Price</a></li>
+        <li><a href="#" class = "highPrice">Highest Price</a></li>
+        <li><a href="#" class = "recency">Recency</a></li>
+        <li><a href="#" class = "popularity">Popularity</a></li>
+      </ul>
+    </div>
+    <br>
+    <h2 style="margin-top:10px">Listings Found: </h2>
+    <div class="propPanel "style="overflow-y: scroll; height:540px;">
+      <% if @properties.blank? %>
+      <h4>There are no property containing the address or property type <%= params[:search] %>.</h4>
+      <% end %>
+      <%@properties.each do |prop|%>
       <div class="row sortProps" style="margin-bottom: 25px;">
 
-        <div class="col-md-4">
-          <%= cl_image_tag(prop.photo_url, :width => 180, :height => 170, :alt => "Property Pic") %>
+        <div class="col-md-5">
+          <%= cl_image_tag(prop.photo_url, :width => 250, :height => 170, :alt => "Property Pic") %>
         </div>
         <div class="col-md-4">
           <p class="propAddr" style="font-weight:bold;"><%=prop.address%></p>
@@ -38,105 +40,139 @@
 
           <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
-          <p>Popularity: <span class="propPop"><%=prop.shortlists.length%></span></p>
+          <p>Interests: <span class="propPop"><%=prop.shortlists.length%></span></p>
           <p style="display:none;"class="propTime">
             <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
-          <p>
-          <p style="display:none;"class="propLat">
-            <%=prop.latitude%>
-          <p>
-          <p style="display:none;"class="propLng">
-            <%=prop.longitude%>
-          <p>
-        </div>
+            <p>
+              <p style="display:none;"class="propLat">
+                <%=prop.latitude%>
+                <p>
+                  <p style="display:none;"class="propLng">
+                    <%=prop.longitude%>
+                    <p>
+                    </div>
 
-      </div>
+                  </div>
 
-    <%end%>
-  </div>
+                  <%end%>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div id="map" style="height:680px;width:100%;"></div>
+              </div>
+              <script>
+
+                var map;
+                function initMap() {
+                  if(<%=@center_map%>){
+                    map = new google.maps.Map(document.getElementById('map'), {
+                      zoom: 11,
+                      center: {lat: 1.384323,lng: 103.826093}
+                    });
+                  }
+                  else{
+                    map = new google.maps.Map(document.getElementById('map'), {
+                      zoom: 16,
+                      center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
+                    });
+                  }
+                  var prev_infowindow =false;
+
+                  <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+                    window['marker'+arr[0]] = new google.maps.Marker({
+                      // var marker = new google.maps.Marker({
+                      position: {lat:arr[0],lng:arr[1]},
+                      map: map
+                    })
+
+                    window['infowindow'+arr[0]] = new google.maps.InfoWindow({
+                      // var infowindow = new google.maps.InfoWindow({
+                      content: arr[2]
+                    });
+                    // var closeWindow = true
+                    // marker.addListener('mouseover', function() {
+                    //     infowindow.setContent(arr[2])
+                    //     closeWindow = true
+                    //   infowindow.open(map, this)
+                    // })
+                    // marker.addListener('mouseout', function() {
+                    //   if(closeWindow){
+                    //     infowindow.close()
+                    //   }
+                    // })
+                    window['marker'+arr[0]].addListener('click', function() {
+                      if(prev_infowindow) {
+                        prev_infowindow.close();
+                      }
+                      prev_infowindow = window['infowindow'+arr[0]];
+                      // closeWindow = false
+                      window['infowindow'+arr[0]].open(map, this)
+
+                      var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
+                      var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+                      $otherDiv.hide()
+                      $highlightedDiv.show()
+                    })
+
+                    window['marker'+arr[0]].addListener('closeclick', function() {
+                      var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+                      $otherDiv.show()
+                      console.log('closing')
+                      // closeWindow = true
+                    })
+                  })
+
+                }
+
+                function centrePin () {
+                  var $propLatitude = parseFloat($(this).find('.propLat').text())
+                  var $propLongitude = parseFloat($(this).find('.propLng').text())
+                  map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
+                  console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
+                }
+
+                $(document).on('mouseenter', '.sortProps', {}, centrePin)
+                // $(document).on('mouseenter', '.sorProps', {}, originalPin)
+
+
+              </script>
+              <script async defer
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
+            </script>
+            <script>
+            var substringMatcher = function(strs) {
+              return function findMatches(q, cb) {
+                var matches, substringRegex;
+                // an array that will be populated with substring matches
+                matches = [];
+
+                // regex used to determine if a string contains the substring `q`
+                substrRegex = new RegExp(q, 'i');
+
+                // iterate through the pool of strings and for any string that
+                // contains the substring `q`, add it to the `matches` array
+                $.each(strs, function(i, str) {
+                  if (substrRegex.test(str)) {
+                    matches.push(str);
+                  }
+                });
+
+                cb(matches);
+              };
+            };
+
+            $('#suggestions .typeahead').typeahead({
+              hint: true,
+              highlight: true,
+              minLength: 1
+            },
+            {
+              name: 'all_properties',
+              source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
+            });
+
+            </script>
+
 </div>
-<div class="col-md-6">
-  <h2>Google Map API</h2>
-  <div id="map" style="height:400px;width:100%;"></div>
-</div>
-<script>
-
-var map;
-  function initMap() {
-    if(<%=@center_map%>){
-      map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 11,
-        center: {lat: 1.384323,lng: 103.826093}
-      });
-    }
-    else{
-      map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
-      });
-    }
-    var prev_infowindow =false;
-
-    <%=@geocode.to_json.html_safe%>.forEach(function(arr){
-      window['marker'+arr[0]] = new google.maps.Marker({
-      // var marker = new google.maps.Marker({
-        position: {lat:arr[0],lng:arr[1]},
-        map: map
-      })
-
-      window['infowindow'+arr[0]] = new google.maps.InfoWindow({
-      // var infowindow = new google.maps.InfoWindow({
-        content: arr[2]
-      });
-      // var closeWindow = true
-      // marker.addListener('mouseover', function() {
-      //     infowindow.setContent(arr[2])
-      //     closeWindow = true
-      //   infowindow.open(map, this)
-      // })
-      // marker.addListener('mouseout', function() {
-      //   if(closeWindow){
-      //     infowindow.close()
-      //   }
-      // })
-      window['marker'+arr[0]].addListener('click', function() {
-        if(prev_infowindow) {
-             prev_infowindow.close();
-          }
-        prev_infowindow = window['infowindow'+arr[0]];
-        // closeWindow = false
-        window['infowindow'+arr[0]].open(map, this)
-
-        var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
-        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.hide()
-        $highlightedDiv.show()
-      })
-
-      window['marker'+arr[0]].addListener('closeclick', function() {
-        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.show()
-        console.log('closing')
-        // closeWindow = true
-      })
-    })
-
-  }
-
-  function centrePin () {
-    var $propLatitude = parseFloat($(this).find('.propLat').text())
-    var $propLongitude = parseFloat($(this).find('.propLng').text())
-    map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
-    console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
-  }
-
-  $(document).on('mouseenter', '.sortProps', {}, centrePin)
-  // $(document).on('mouseenter', '.sorProps', {}, originalPin)
-
-
-</script>
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
-</script>
