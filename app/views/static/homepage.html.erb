@@ -4,9 +4,9 @@
             <div class="header-content-inner">
                 <h1 id="homeHeading">Find a home you love</h1>
                 <hr>
-                <div class="input-group">
+                <div class="input-group" id="suggestions">
                 <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
-                <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
+                <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control typeahead" %>
                 <span><%= submit_tag "Search", :name => nil, :class => "btn" %></span>
               </div>
             <% end %>
@@ -58,3 +58,38 @@
             </div>
         </div>
     </section>
+
+
+<script>
+var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substringRegex;
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str)) {
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+$('#suggestions .typeahead').typeahead({
+  hint: true,
+  highlight: true,
+  minLength: 1
+},
+{
+  name: 'all_properties',
+  source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
+});
+
+</script>
