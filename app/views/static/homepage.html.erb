@@ -8,10 +8,10 @@
         <button class="btn btn-default" type="button">Search</button>
       </span>
     </div> -->
-    <div class="input-group">
+    <div id='suggestions'>
     <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
-    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
+    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "typeahead" %>
+    <%= submit_tag "Search", :name => nil, :class => "btn btn-default" %>
   </div>
 <% end %>
 </div>
@@ -51,3 +51,38 @@
   </div>
 </div>
   <%end%>
+
+
+<script>
+var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substringRegex;
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str)) {
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+$('#suggestions .typeahead').typeahead({
+  hint: true,
+  highlight: true,
+  minLength: 1
+},
+{
+  name: 'all_properties',
+  source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
+});
+
+</script>

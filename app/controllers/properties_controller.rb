@@ -2,11 +2,12 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :edit, :update, :destroy, :contact_owner]
   before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   def index  #To render page showing ALL properties
-    @properties = Property.all
-    @prop_desc_price = Property.order('price DESC')
-    @prop_asc_price = Property.order('price')
-    @prop_recent = Property.order('created_at DESC')
-    @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
+    # @properties = Property.all
+    # @prop_desc_price = Property.order('price DESC')
+    # @prop_asc_price = Property.order('price')
+    # @prop_recent = Property.order('created_at DESC')
+    # @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
+
 
     if params[:search]
       @properties = Property.search(params[:search]).order("created_at DESC")
@@ -14,6 +15,20 @@ class PropertiesController < ApplicationController
       @properties = Property.all.order("created_at DESC")
     end
   end
+
+  # def search
+  #   p 'hi'
+  #   limit = params[:limit] || 10
+  #   page = params[:page] || 10
+  #   offset = ((page.to_i - 1) * limit.to_i) || 0
+  #   search = params[:search] || nil
+  #   properties = []
+  #   properties = Property.where("address ILIKE ? OR property_type ILIKE ?", "%#{search}%", "%#{search}%")
+  #                        .limit(limit)
+  #                        .offset(offset) if search
+  #   render json: properties
+  # end
+
 
   def show  #To render page of select property
     #No need anything here, because before_action executed with set_property @property and auto route to /show page

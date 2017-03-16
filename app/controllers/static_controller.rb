@@ -9,5 +9,9 @@ class StaticController < ApplicationController
 
     #From Property database, pick out 3 most recent properties
     @recent_properties = Property.order('created_at DESC').limit(3)
+
+    @all_properties = []
+    @properties.each { |p| @all_properties.push(p.address) }
+    p @all_properties
   end
 end
