@@ -15,6 +15,7 @@ gem 'devise'
 gem 'pry'
 gem 'bootstrap-sass'
 gem 'bootstrap_form'
+gem 'geocoder'
 # Use postgresql as the database for Active Record
 # gem 'pg', '~> 0.18'
 # Use Puma as the app server

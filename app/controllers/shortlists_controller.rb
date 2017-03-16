@@ -1,10 +1,15 @@
 class ShortlistsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_user
   def index
-    #Show all shortlists for the current_user
-     #This is the user currently logged in
+
     @shortlists = @user.shortlists
     @properties = Property.all
+
+    respond_to do |format|
+      format.html { render '/users/registrations/edit.html.erb', locals:{ajax_render:'index'} }
+      format.js { render :index}
+    end
   end
 
   def create

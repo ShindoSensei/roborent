@@ -1,14 +1,30 @@
 class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :edit, :update, :destroy, :contact_owner]
   before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
-  def index  
+
+  def index
+    @geocode = []
     if params[:search]
       @properties = Property.search(params[:search]).order("created_at")
+      @properties.each do |prop|
+        position = [prop.latitude,prop.longitude,prop.address]
+        @geocode.push(position)
+        if params[:search].empty?
+          @center_map = true
+        else
+          @center_map = false
+        end
+      end
+
     else
       @properties = Property.all.order("created_at")
+      @center_map = true
+      @properties.each do |prop|
+        position = [prop.latitude,prop.longitude,prop.address]
+        @geocode.push(position)
+      end
     end
     if params[:popular] == "string"
-      p params[:popular]
       @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
     end
   end
@@ -80,6 +96,11 @@ class PropertiesController < ApplicationController
   def listings
     @listings = current_user.properties
     @properties = Property.all
+    respond_to do |format|
+      format.html { render '/users/registrations/edit.html.erb', locals:{ajax_render:'listings'} }
+      format.js { render :listings}
+    end
+    # ajax_render =
   end
 
   def contact_owner

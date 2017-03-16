@@ -14,9 +14,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # GET /resource/edit
-  # def edit
-  #   super
-  # end
+  def edit
+    # super
+    respond_to do |format|
+      format.html { render :edit, locals:{ajax_render:'edit_profile_form'} }
+      format.js { render :edit}
+    end
+  end
 
   # PUT /resource
   # def update
