@@ -27,6 +27,9 @@ class PropertiesController < ApplicationController
     if params[:popular] == "string"
       @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
     end
+
+    @all_properties = []
+    Property.all.each { |p| @all_properties.push(p.address) }
   end
 
   def show  #To render page of select property

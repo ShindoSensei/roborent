@@ -12,6 +12,5 @@ class StaticController < ApplicationController
 
     @all_properties = []
     @properties.each { |p| @all_properties.push(p.address) }
-    p @all_properties
   end
 end

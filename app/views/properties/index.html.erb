@@ -1,5 +1,4 @@
 <div class="properties-index">
-
   <div class="col-md-6">
     <div id="suggestions">
     <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
@@ -62,117 +61,108 @@
               <div class="col-md-6">
                 <div id="map" style="height:680px;width:100%;"></div>
               </div>
-              <script>
 
-                var map;
-                function initMap() {
-                  if(<%=@center_map%>){
-                    map = new google.maps.Map(document.getElementById('map'), {
-                      zoom: 11,
-                      center: {lat: 1.384323,lng: 103.826093}
-                    });
-                  }
-                  else{
-                    map = new google.maps.Map(document.getElementById('map'), {
-                      zoom: 16,
-                      center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
-                    });
-                  }
-                  var prev_infowindow =false;
+<script>
 
-                  <%=@geocode.to_json.html_safe%>.forEach(function(arr){
-                    window['marker'+arr[0]] = new google.maps.Marker({
-                      // var marker = new google.maps.Marker({
-                      position: {lat:arr[0],lng:arr[1]},
-                      map: map
-                    })
+var map;
+  function initMap() {
+    if(<%=@center_map%>){
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 11,
+        center: {lat: 1.384323,lng: 103.826093}
+      });
+    }
+    else{
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 16,
+        center: {lat: <%=@geocode[0][0]%>,lng: <%=@geocode[0][1]%>}
+      });
+    }
+    var prev_infowindow =false;
 
-                    window['infowindow'+arr[0]] = new google.maps.InfoWindow({
-                      // var infowindow = new google.maps.InfoWindow({
-                      content: arr[2]
-                    });
-                    // var closeWindow = true
-                    // marker.addListener('mouseover', function() {
-                    //     infowindow.setContent(arr[2])
-                    //     closeWindow = true
-                    //   infowindow.open(map, this)
-                    // })
-                    // marker.addListener('mouseout', function() {
-                    //   if(closeWindow){
-                    //     infowindow.close()
-                    //   }
-                    // })
-                    window['marker'+arr[0]].addListener('click', function() {
-                      if(prev_infowindow) {
-                        prev_infowindow.close();
-                      }
-                      prev_infowindow = window['infowindow'+arr[0]];
-                      // closeWindow = false
-                      window['infowindow'+arr[0]].open(map, this)
+    <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+      window['marker'+arr[0]] = new google.maps.Marker({
+      // var marker = new google.maps.Marker({
+        position: {lat:arr[0],lng:arr[1]},
+        map: map
+      })
 
-                      var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
-                      var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-                      $otherDiv.hide()
-                      $highlightedDiv.show()
-                    })
+      window['infowindow'+arr[0]] = new google.maps.InfoWindow({
+      // var infowindow = new google.maps.InfoWindow({
+        content: arr[2]
+      });
+      // var closeWindow = true
+      // marker.addListener('mouseover', function() {
+      //     infowindow.setContent(arr[2])
+      //     closeWindow = true
+      //   infowindow.open(map, this)
+      // })
+      // marker.addListener('mouseout', function() {
+      //   if(closeWindow){
+      //     infowindow.close()
+      //   }
+      // })
+      window['marker'+arr[0]].addListener('click', function() {
+        if(prev_infowindow) {
+             prev_infowindow.close();
+          }
+        prev_infowindow = window['infowindow'+arr[0]];
+        // closeWindow = false
+        window['infowindow'+arr[0]].open(map, this)
 
-                    window['marker'+arr[0]].addListener('closeclick', function() {
-                      var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-                      $otherDiv.show()
-                      console.log('closing')
-                      // closeWindow = true
-                    })
-                  })
+        var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
+        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+        $otherDiv.hide()
+        $highlightedDiv.show()
+      })
 
-                }
+      window['marker'+arr[0]].addListener('closeclick', function() {
+        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+        $otherDiv.show()
+        console.log('closing')
+        // closeWindow = true
+      })
+    })
 
-                function centrePin () {
-                  var $propLatitude = parseFloat($(this).find('.propLat').text())
-                  var $propLongitude = parseFloat($(this).find('.propLng').text())
-                  map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
-                  console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
-                }
+  }
 
-                $(document).on('mouseenter', '.sortProps', {}, centrePin)
-                // $(document).on('mouseenter', '.sorProps', {}, originalPin)
+  function centrePin () {
+    var $propLatitude = parseFloat($(this).find('.propLat').text())
+    var $propLongitude = parseFloat($(this).find('.propLng').text())
+    map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
+    console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
+  }
 
+  $(document).on('mouseenter', '.sortProps', {}, centrePin)
+  // $(document).on('mouseenter', '.sorProps', {}, originalPin)
 
-              </script>
-              <script async defer
-              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
-            </script>
-            <script>
-            var substringMatcher = function(strs) {
-              return function findMatches(q, cb) {
-                var matches, substringRegex;
-                // an array that will be populated with substring matches
-                matches = [];
+  var substringMatcher = function(strs) {
+    return function findMatches(q, cb) {
+      var matches, substringRegex;
+      matches = [];
 
-                // regex used to determine if a string contains the substring `q`
-                substrRegex = new RegExp(q, 'i');
+      substrRegex = new RegExp(q, 'i');
 
-                // iterate through the pool of strings and for any string that
-                // contains the substring `q`, add it to the `matches` array
-                $.each(strs, function(i, str) {
-                  if (substrRegex.test(str)) {
-                    matches.push(str);
-                  }
-                });
+      $.each(strs, function(i, str) {
+        if (substrRegex.test(str)) {
+          matches.push(str);
+        }
+      });
 
-                cb(matches);
-              };
-            };
+      cb(matches);
+    };
+  };
 
-            $('#suggestions .typeahead').typeahead({
-              hint: true,
-              highlight: true,
-              minLength: 1
-            },
-            {
-              name: 'all_properties',
-              source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
-            });
-
-            </script>
-
-</div>
+  $('#suggestions .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'all_properties',
+    source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
+  });
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
+</script>
