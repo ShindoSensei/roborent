@@ -86,7 +86,8 @@ var map;
         map: map
       })
 
-      var infowindow = new google.maps.InfoWindow({
+      window['infowindow'+arr[0]] = new google.maps.InfoWindow({
+      // var infowindow = new google.maps.InfoWindow({
         content: arr[2]
       });
       // var closeWindow = true
@@ -104,9 +105,9 @@ var map;
         if(prev_infowindow) {
              prev_infowindow.close();
           }
-        prev_infowindow = infowindow;
+        prev_infowindow = window['infowindow'+arr[0]];
         // closeWindow = false
-        infowindow.open(map, this)
+        window['infowindow'+arr[0]].open(map, this)
 
         var $highlightedDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div')
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
@@ -114,13 +115,14 @@ var map;
         $highlightedDiv.show()
       })
 
-      infowindow.addListener('closeclick', function() {
+      window['marker'+arr[0]].addListener('closeclick', function() {
         var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
         $otherDiv.show()
+        console.log('closing')
         // closeWindow = true
       })
     })
-    
+
   }
 
   function centrePin () {
