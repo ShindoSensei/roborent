@@ -1,53 +1,60 @@
 
-<div class="jumbotron">
-  <h1>Roborent</h1>
-  <p>We connect landlords and tenants without agents!</p>
-  <!-- <div class="input-group">
-      <input type="text" class="form-control" placeholder="Search listings by address">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button">Search</button>
-      </span>
-    </div> -->
-    <div class="input-group">
-    <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
-    <span><%= submit_tag "Search", :name => nil, :class => "btn btn-default" %></span>
-  </div>
-<% end %>
-</div>
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h1 id="homeHeading">Find a home you love</h1>
+                <hr>
+                <div class="input-group">
+                <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
+                <%= text_field_tag :search, params[:search], placeholder: "Enter address or property type", :class => "form-control" %>
+                <span><%= submit_tag "Search", :name => nil, :class => "btn" %></span>
+              </div>
+            <% end %>
+            </div>
+        </div>
+    </header>
 
-<h3>Popular Properties</h3>
-<% @top_shortlists.each do |prop| %>
-<div class="col-md-4">
-<div class="panel panel-danger">
-  <div class="panel-heading">
-    <h3 class="panel-title"><%=prop.address%></h3>
-  </div>
-  <div class="panel-body">
-    <div class='container'><%= cl_image_tag(prop.photo_url, :width => 200, :height => 150) %></div>
-    <br><br>
-    <p>Popularity count: <%=prop.shortlists.count%></p>
-    <p>Rental: $<%=prop.price%>/mth for <%=prop.rent_area%></p>
-    <%= link_to 'View Details', property_path(prop) %>
-  </div>
-</div>
-</div>
-<%end%>
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                    <h2 class="section-heading">Popular Properties</h2>
+                    <hr>
+                    <% @top_shortlists.each do |prop| %>
+                    <div class="col-md-4">
+                      <a href="/properties/<%=prop.id%>">
+                      <%= cl_image_tag(prop.photo_url, :width => 340, :height => 220) %>
+                      </a>
+                        <br><br>
+                        <p><strong>$<%=prop.price%>/mth &emsp; &emsp; <%=prop.address%></strong>
+                        <br><%=prop.rent_area%><br></p>
+                    </div>
+                    <%end%>
+                    <%= link_to "View more", properties_path(popular: "string"), :class => "page-scroll btn btn-xl sr-button"%>
 
-<h3>Recent Properties</h3>
 
-  <% @recent_properties.each do |property| %>
-  <div class="col-md-4">
-  <div class="panel panel-info">
-    <div class="panel-heading">
-      <h3 class="panel-title"><%=property.address%></h3>
-    </div>
-    <div class="panel-body">
-      <div class='container'><%= cl_image_tag(property.photo_url, :width => 200, :height => 150) %></div>
-      <br><br>
-      <p>Rental: $<%=property.price%>/mth for <%=property.rent_area%></p>
-      <%= link_to 'View Details', property_path(property) %>
-    </div>
-  </div>
-</div>
-  <%end%>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                    <h2 class="section-heading">Recent Properties</h2>
+                    <hr>
+                    <% @recent_properties.each do |property| %>
+                    <div class="col-md-4">
+                      <a href="/properties/<%=property.id%>">
+                      <%= cl_image_tag(property.photo_url, :width => 340, :height => 220) %>
+                      </a>
+                      <br><br>
+                      <p>
+                        <strong>$<%=property.price%>/mth &emsp; &emsp; <%=property.address%></strong>
+                        <br><%=property.rent_area%><br>
+                      </p>
+                  </div>
+                    <%end%>
+                    <%= link_to "View more", properties_path, :class => "page-scroll btn btn-xl sr-button"%>
+
+            </div>
+        </div>
+    </section>

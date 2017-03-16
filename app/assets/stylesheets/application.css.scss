@@ -1,0 +1,75 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+.list-property-h1 {
+  margin-top: 80px;
+  margin-bottom: 30px;
+}
+label.control-label {
+  display: block;
+}
+a.btn.editProfile {
+  margin-top: 80px;
+}
+a.btn.myListings {
+  margin-top: 80px;
+}
+a.btn.myShortlists {
+  margin-top: 80px;
+}
+input#search {
+  width: 600px;
+}
+input.btn {
+  background-color: #F05F40;
+  border-radius: initial;
+  text-transform: none;
+  color: white;
+}
+.input-group {
+  margin: auto;
+}
+.show-property-img {
+  height: 700px;
+  margin-top: 80px;
+  text-align: center;
+}
+.container.show-property {
+  padding: 20px 38px;
+}
+div#shortlist-button {
+  display: inline-block;
+  float: right;
+}
+textarea#body {
+  width: 1000px;
+  height: 150px;
+  padding: 6px;
+}
+.field {
+  margin-bottom: 10px;
+}
+.container.signup {
+  margin-top: 80px;
+  text-align: center;
+}
+.signup-text {
+  width: 600px;
+  height: 40px;
+  padding: 8px;
+}

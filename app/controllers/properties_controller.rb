@@ -2,16 +2,19 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :edit, :update, :destroy, :contact_owner]
   before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   def index  #To render page showing ALL properties
-    @properties = Property.all
-    @prop_desc_price = Property.order('price DESC')
-    @prop_asc_price = Property.order('price')
-    @prop_recent = Property.order('created_at DESC')
-    @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
-
+    # @properties = Property.all
+    # @prop_desc_price = Property.order('price DESC')
+    # @prop_asc_price = Property.order('price')
+    # @prop_recent = Property.order('created_at DESC')
+    # @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
     if params[:search]
-      @properties = Property.search(params[:search]).order("created_at DESC")
+      @properties = Property.search(params[:search]).order("created_at")
     else
-      @properties = Property.all.order("created_at DESC")
+      @properties = Property.all.order("created_at")
+    end
+    if params[:popular] == "string"
+      p params[:popular]
+      @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
     end
   end
 

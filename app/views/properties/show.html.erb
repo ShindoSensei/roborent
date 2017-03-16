@@ -1,31 +1,33 @@
-<%= cl_image_tag(@property.photo_url, :width => 400, :height => 400, :alt => "Sample Image") %>
+<div class="container show-property-img">
+  <%= cl_image_tag(@property.photo_url, :width => 1100, :height => 700, :alt => "Sample Image") %>
+</div>
 
-<div class="container" style="padding-top:20px">
+<div class="container show-property">
   <strong><%= @property.address %>, Singapore <%= @property.postcode %></strong>
   <div id="shortlist-button">
-    <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), :method => :post, class:'btn btn-primary', :remote => true %>
+    <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), :method => :post, class:'btn', :remote => true %>
   </div>
-  <br>
-  $<%= @property.price %>/month
-  <%= @property.lease_durn %> months lease
-  <%= @property.property_type %>
+  <br><br>
+  $<%= @property.price %>/month &emsp; &emsp;
+  <%= @property.lease_durn %> months lease &emsp; &emsp;
+  <%= @property.property_type %> &emsp; &emsp;
   <%= @property.rent_area %>
 </div>
-<div class="container" style="padding-top:20px">
+<div class="container show-property">
   <strong>Description</strong><br>
   <%= @property.description %>
 </div>
-<div class="container" style="padding-top:20px">
+<div class="container show-property">
   <strong>Amenities</strong><br>
   <% @property.amenities.each do |amenity| %>
-  <%= amenity.name %>
+  <%= amenity.name %> &emsp; &emsp;
   <% end %>
 </div>
-<div class="container" style="padding-top:20px">
+<div class="container show-property">
   <strong>Contact Owner</strong><br>
   <%= form_tag (contact_owner_path) do %>
   <%= text_area_tag :body %>
   <br><br>
-  <%= submit_tag "Submit", class: "btn btn-primary" %>
+  <%= submit_tag "Submit", class: "btn" %>
   <% end %>
 </div>

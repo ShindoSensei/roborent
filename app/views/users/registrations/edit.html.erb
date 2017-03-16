@@ -1,6 +1,9 @@
-<%= link_to("Edit Profile", edit_user_registration_path, class: "btn btn-primary editProfile", remote:true)%>
-<%= link_to("My Listings", listings_path, class: "btn btn-primary myListings", remote:true)%>
-<%= link_to("My Shortlists", shortlists_index_path, class: "btn btn-primary myShortlists", remote:true)%>
-<div id="ajaxContainer">
-  <%= render 'edit_profile_form'%>
+<div class="container">
+
+  <%= link_to("Edit Profile", edit_user_registration_path, class: "btn editProfile", remote:true)%>
+  <%= link_to("My Listings", listings_path, class: "btn myListings", remote:true)%>
+  <%= link_to("My Shortlist", shortlists_index_path, class: "btn myShortlists", remote:true)%>
+  <div id="ajaxContainer">
+    <%= render 'edit_profile_form'%>
+  </div>
 </div>

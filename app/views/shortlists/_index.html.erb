@@ -1,20 +1,15 @@
-<h1>Shortlists</h1>
+<h1>Shortlisted Homes</h1>
 <div class="row">
 <% @shortlists.each do |shortlist| %>
-  <div class="col-md-3">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><%=@properties.find(shortlist.property_id).address%></h3>
-      </div>
-      <div class="panel-body">
-        <a href=<%="/properties/"+shortlist.property_id.to_s%>>
-          <img src=<%=@properties.find(shortlist.property_id).photo_url%> alt="Property Pic" style="width:220px; height:100px;">
-        </a>
-        <p>$<%=@properties.find(shortlist.property_id).price%>/month</p>
-        <%= link_to("Details", property_path(id:shortlist.property_id), class: "btn btn-primary btn-xs")%>
-        <%= link_to("Remove", remove_shortlists_path(id:shortlist.id,prop_id:shortlist.property_id), method: :delete, class: "btn btn-danger btn-xs")%>
-      </div>
+  <div class="col-md-4">
+    <a href=<%="/properties/"+shortlist.property_id.to_s%>>
+      <%= cl_image_tag(@properties.find(shortlist.property_id).photo_url, :width => 300, :height => 200, :alt => "Property pic") %>
+    </a>
+    <div class="">
+      $<%=@properties.find(shortlist.property_id).price%>/month &emsp; &emsp; <%=@properties.find(shortlist.property_id).address%>
     </div>
-  </div>
+      <%= link_to("Details", property_path(id:shortlist.property_id), class: "btn btn-xs")%>
+      <%= link_to("Remove", remove_shortlists_path(id:shortlist.id,prop_id:shortlist.property_id), method: :delete, class: "btn btn-xs")%>
+    </div>
 <%end%>
 </div>

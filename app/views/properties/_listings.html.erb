@@ -1,23 +1,21 @@
 <h1>Listings</h1>
-<%= link_to("Add Listing", new_property_path, class: "btn btn-success btn-sm")%>
+<%= link_to("Add a Listing", new_property_path, class: "btn btn-sm")%>
 <br><br>
 <div class="row">
 <% @listings.each do |prop| %>
-  <div class="col-md-3">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><%=@properties.find(prop.id).address%></h3>
-      </div>
-      <div class="panel-body">
+  <div class="col-md-4">
         <a href=<%="/properties/"+prop.id.to_s%>>
-          <%= cl_image_tag(@properties.find(prop.id).photo_url, :width => 220, :height => 150, :alt => "Property Pic") %>
+          <%= cl_image_tag(@properties.find(prop.id).photo_url, :width => 300, :height => 200, :alt => "Property Pic") %>
         </a>
-        <p>Price: $<%=@properties.find(prop.id).price%>/month</p>
-        <p>Popularity: <%=@properties.find(prop.id).shortlists.length%></p>
-        <%= link_to("Edit Property", '/properties/'+prop.id.to_s+'/edit',class: "btn btn-primary btn-xs")%>
-        <%= link_to("Remove", '/properties/'+prop.id.to_s, method: :delete, class: "btn btn-danger btn-xs")%>
-      </div>
-    </div>
+        <div class="">
+          <%=@properties.find(prop.id).address%> &emsp; &emsp; $<%=@properties.find(prop.id).price%>/month
+        </div>
+        <div class="">
+          Interest(s) received: <%=@properties.find(prop.id).shortlists.length%>
+        </div>
+        <%= link_to("Edit Property", '/properties/'+prop.id.to_s+'/edit',class: "btn btn-xs")%>
+        <%= link_to("Remove", '/properties/'+prop.id.to_s, method: :delete, class: "btn btn-xs")%>
+
   </div>
 <%end%>
 </div>
