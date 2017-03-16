@@ -2,16 +2,31 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :edit, :update, :destroy, :contact_owner]
   before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   def index  #To render page showing ALL properties
-    @properties = Property.all
-    @prop_desc_price = Property.order('price DESC')
-    @prop_asc_price = Property.order('price')
-    @prop_recent = Property.order('created_at DESC')
-    @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
-
+    # @properties = Property.all
+    # @prop_desc_price = Property.order('price DESC')
+    # @prop_asc_price = Property.order('price')
+    # @prop_recent = Property.order('created_at DESC')
+    # @prop_popular = (@properties.sort_by {|prop| prop.shortlists.count}).reverse!
+    @geocode = []
     if params[:search]
       @properties = Property.search(params[:search]).order("created_at DESC")
+      @properties.each do |prop|
+        position = [prop.latitude,prop.longitude,prop.address]
+        @geocode.push(position)
+        if params[:search].empty?
+          @center_map = true
+        else
+          @center_map = false
+        end
+      end
+
     else
       @properties = Property.all.order("created_at DESC")
+      @center_map = true
+      @properties.each do |prop|
+        position = [prop.latitude,prop.longitude,prop.address]
+        @geocode.push(position)
+      end
     end
   end
 
@@ -82,6 +97,11 @@ class PropertiesController < ApplicationController
   def listings
     @listings = current_user.properties
     @properties = Property.all
+    respond_to do |format|
+      format.html { render '/users/registrations/edit.html.erb', locals:{ajax_render:'listings'} }
+      format.js { render :listings}
+    end
+    # ajax_render =
   end
 
   def contact_owner
