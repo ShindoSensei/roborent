@@ -30,7 +30,7 @@ class ShortlistsController < ApplicationController
     @properties = Property.all
     @property = Property.find(params[:prop_id])
     respond_to do |format|
-      format.html { render :_index, notice: 'Property successfully removed from shortlist.' }
+      format.html { render './users/registrations/edit', locals:{ajax_render:'index'}, notice: 'Property successfully removed from shortlist.' }
       format.json { head :no_content }
       format.js {}
     end

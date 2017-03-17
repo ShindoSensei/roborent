@@ -5,7 +5,13 @@
 <div class="container show-property">
   <strong><%= @property.address %>, Singapore <%= @property.postcode %></strong>
   <div id="shortlist-button">
-    <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), :method => :post, class:'btn', :remote => true %>
+    <% if current_user %>
+      <% if current_user.shortlists.where('property_id=?', @property.id.to_i)[0] == nil %>
+      <%= link_to 'Shortlist', shortlists_path(prop_id: @property.id), :method => :post, class:'btn', :remote => true %>
+      <% else %>
+      <%= link_to 'Remove from shortlist', remove_shortlists_path(id: @shortlist.id, prop_id: @property.id), :method => :delete, class:'btn', :remote => true %>
+      <% end %>
+    <% end %>
   </div>
   <br><br>
   $<%= @property.price %>/month &emsp; &emsp;
@@ -18,16 +24,21 @@
   <%= @property.description %>
 </div>
 <div class="container show-property">
-  <strong>Amenities</strong><br>
+  <strong>Amenities</strong><br><br>
   <% @property.amenities.each do |amenity| %>
   <%= amenity.name %> &emsp; &emsp;
   <% end %>
 </div>
+
 <div class="container show-property">
   <strong>Contact Owner</strong><br>
-  <%= form_tag (contact_owner_path) do %>
-  <%= text_area_tag :body %>
-  <br><br>
-  <%= submit_tag "Submit", class: "btn" %>
+  <% if current_user %>
+    <%= form_tag (contact_owner_path) do %>
+    <%= text_area_tag :body %>
+    <br><br>
+    <%= submit_tag "Submit", class: "btn" %>
+    <% end %>
+  <% else %>
+  Like to find out more? <a href="/users/sign_up">Sign up</a> / <a href="/users/sign_in">Log in</a> to contact the landlord!
   <% end %>
 </div>

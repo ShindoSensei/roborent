@@ -51,6 +51,13 @@ class PropertiesController < ApplicationController
 
   def show  #To render page of select property
     #No need anything here, because before_action executed with set_property @property and auto route to /show page
+    # puts "current shortlist is"
+    # puts current_user.id.to_i
+    # puts @property.id.to_i
+    # puts current_user.shortlists.where('property_id=?', @property.id.to_i)
+    if current_user
+      @shortlist = Shortlist.where('user_id=?', current_user.id.to_i).where('property_id=?', @property.id.to_i)[0]
+    end
   end
 
   def new  #To render page where you can create property
@@ -108,7 +115,7 @@ class PropertiesController < ApplicationController
     @listings = current_user.properties
     @properties = Property.all
     respond_to do |format|
-      format.html { render :_listings, notice: 'Property was successfully de-listed.' }
+      format.html { render './users/registrations/edit', locals:{ajax_render:'listings'}, notice: 'Property was successfully de-listed.' }
       format.json { head :no_content }
     end
   end
