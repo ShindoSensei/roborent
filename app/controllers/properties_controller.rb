@@ -8,12 +8,14 @@ class PropertiesController < ApplicationController
     if params[:search]#got search
       p "got search"
       @center_map = true
-      @properties = Property.search(params[:search]).order("created_at")
+      # @properties = Property.search(params[:search]).order("created_at")
+      @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
 
       if params[:search].empty? #empty search
         p "got search but empty"
         @center_map = true
-        @properties = Property.all.order("created_at")
+        # @properties = Property.all.order("created_at")
+        @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
         @properties.each do |prop|
           position = [prop.latitude,prop.longitude,prop.address]
           @geocode.push(position)

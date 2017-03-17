@@ -23,46 +23,43 @@
     <h2 style="margin-top:10px">Listings Found: </h2>
     <div class="propPanel "style="overflow-y: scroll; height:540px;">
       <% if @properties.blank? %>
-      <h4>There are no properties containing the address or property type <%= params[:search] %>.</h4>
+      <h4>No matched property of name <%= params[:search] %>.</h4>
       <% end %>
       <%@properties.each do |prop|%>
-      <div class="row sortProps" style="margin-bottom: 25px;">
-
-        <div class="col-md-5">
-          <%= cl_image_tag(prop.photo_url, :width => 250, :height => 170, :alt => "Property Pic") %>
-        </div>
-        <div class="col-md-4">
-          <p class="propAddr" style="font-weight:bold;"><%=prop.address%></p>
-          <p>S<%=prop.postcode%></p>
-          <p><%=prop.property_type%>, <%=prop.rent_area%></p>
-
-
-          <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
-        </div>
-        <div class="col-md-3">
-          <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
-          <p>Interests: <span class="propPop"><%=prop.shortlists.length%></span></p>
-          <p style="display:none;"class="propTime">
-            <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
+        <div class="row sortProps" style="margin-bottom: 25px;">
+          <div class="col-md-5">
+            <%= cl_image_tag(prop.photo_url, :width => 250, :height => 170, :alt => "Property Pic") %>
+          </div>
+          <div class="col-md-4">
+            <p style="font-weight:bold;">
+              <%= link_to prop.address,property_path(id: prop.id)%>
+            </p>
+            <p class="propAddr" style="display:none;"><%=prop.address%></p>
+            <p>S<%=prop.postcode%></p>
+            <p><%=prop.property_type%>, <%=prop.rent_area%></p>
+            <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
+          </div>
+          <div class="col-md-3">
+            <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
+            <p>Interests: <span class="propPop"><%=prop.shortlists.length%></span></p>
+            <p style="display:none;"class="propTime">
+              <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
             <p>
-              <p style="display:none;"class="propLat">
-                <%=prop.latitude%>
-                <p>
-                  <p style="display:none;"class="propLng">
-                    <%=prop.longitude%>
-                    <p>
-                    </div>
-
-                  </div>
-
-                  <%end%>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div id="map" style="height:680px;width:100%;"></div>
-              </div>
+            <p style="display:none;"class="propLat">
+              <%=prop.latitude%>
+            <p>
+            <p style="display:none;"class="propLng">
+              <%=prop.longitude%>
+            <p>
+          </div>
+        </div>
+      <%end%>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div id="map" style="height:680px;width:100%;"></div>
+  </div>
 <script>
-
 
   function initMap() {
     var map;
@@ -85,16 +82,7 @@
     }
     var prev_infowindow =false;
 
-    if(<%=@properties.empty?%>){
-      var marker = new google.maps.Marker({
-        position: {lat:1.3046,lng:103.8319},
-        map: map
-      })
-      var infowindow = new google.maps.InfoWindow({
-        content: "Orchard"
-      })
-    }
-    else{
+      if(!<%=@properties.empty?%>){
     <%=@geocode.to_json.html_safe%>.forEach(function(arr){
       var marker = new google.maps.Marker({
         position: {lat:arr[0],lng:arr[1]},
@@ -140,15 +128,20 @@
     })
     }
     function centrePin () {
+
       var $propLatitude = parseFloat($(this).find('.propLat').text())
       var $propLongitude = parseFloat($(this).find('.propLng').text())
-      // console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
-      map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
-      var $propAddress = $(this).find('.propAddr').text()
-      var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
-      disableShowHide = true
-      google.maps.event.trigger(relatedMarker, 'click');
+      console.log("Prop latitude is " + $propLatitude)
+      console.log("Prop longitude is " + $propLongitude)
+      // console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
+      if(!isNaN($propLatitude) && !isNaN($propLongitude)){
+        map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
+        var $propAddress = $(this).find('.propAddr').text()
+        var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
+        disableShowHide = true
+        google.maps.event.trigger(relatedMarker, 'click');
+      }
     }
 
     function originalPan(){
@@ -164,9 +157,11 @@
       // map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
       var $propAddress = $(this).find('.propAddr').text()
+      // console.log("originalPan markerArray is " + markerArray)
       var relatedInfoWindow = markerArray.find(function(elm){
         return elm.includes($propAddress)
       })[2]
+      // console.log("originalPan relatedInfoWindow is " + relatedInfoWindow)
 
       disableShowHide = false
       console.log(relatedInfoWindow)
@@ -191,7 +186,6 @@
         }
       });
 
-
       cb(matches);
     };
   };
@@ -205,6 +199,7 @@
     name: 'all_properties',
     source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
   });
+
 </script>
 <script async defer
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">

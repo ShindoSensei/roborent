@@ -1,5 +1,5 @@
 /* global $ */
-$(document).on('turbolinks:load', function () {
+$(document).ready(function () {
   console.log('loaded')
   function sortAscPrice (e) {
     e.preventDefault()
