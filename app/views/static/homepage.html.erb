@@ -19,6 +19,7 @@
             <div class="row">
                     <h2 class="section-heading">Popular Properties</h2>
                     <hr>
+                    <% if !@properties.empty? %>
                     <% @top_shortlists.each do |prop| %>
                     <div class="col-md-4">
                       <a href="/properties/<%=prop.id%>">
@@ -30,7 +31,9 @@
                     </div>
                     <%end%>
                     <%= link_to "View more", properties_path(popular: "string"), :class => "page-scroll btn btn-xl sr-button"%>
-
+                    <% else %>
+                      <p style="text-align:center">There are currently no property available.</p>
+                    <%end%>
 
             </div>
         </div>
@@ -41,6 +44,7 @@
             <div class="row">
                     <h2 class="section-heading">Recent Properties</h2>
                     <hr>
+                    <% if !@properties.empty? %>
                     <% @recent_properties.each do |property| %>
                     <div class="col-md-4">
                       <a href="/properties/<%=property.id%>">
@@ -54,7 +58,9 @@
                   </div>
                     <%end%>
                     <%= link_to "View more", properties_path, :class => "page-scroll btn btn-xl sr-button"%>
-
+                    <% else %>
+                      <p style="text-align:center">There are currently no property available.</p>
+                    <%end%>
             </div>
         </div>
     </section>
