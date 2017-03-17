@@ -23,49 +23,44 @@
     <h2 style="margin-top:10px">Listings Found: </h2>
     <div class="propPanel "style="overflow-y: scroll; height:550px;">
       <% if @properties.blank? %>
-      <h4>There are no properties containing the address or property type <%= params[:search] %>.</h4>
+      <h4>No matched property of name <%= params[:search] %>.</h4>
       <% end %>
       <%@properties.each do |prop|%>
-      <div class="row sortProps" style="margin-bottom: 25px;">
-
-        <div class="col-md-5">
-          <a href="/properties/<%=prop.id%>">
-          <%= cl_image_tag(prop.photo_url, :width => 250, :height => 170, :alt => "Property Pic") %>
-          </a>
-        </div>
-        <div class="col-md-4">
-          <a href="/properties/<%=prop.id%>">
-          <p class="propAddr" style="font-weight:bold; color:black"><%=prop.address%>
-          <br>S<%=prop.postcode%></p></a>
-          <p><%=prop.property_type%>, <%=prop.rent_area%></p>
-
-
-          <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
-        </div>
-        <div class="col-md-3">
-          <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
-          <p>Interests: <span class="propPop"><%=prop.shortlists.length%></span></p>
-          <p style="display:none;"class="propTime">
-            <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
+        <div class="row sortProps" style="margin-bottom: 25px;">
+          <div class="col-md-5">
+            <a href="/properties/<%=prop.id%>">
+            <%= cl_image_tag(prop.photo_url, :width => 250, :height => 170, :alt => "Property Pic") %></a>
+          </div>
+          <div class="col-md-4">
+            <p style="font-weight:bold;">
+              <%= link_to prop.address,property_path(id: prop.id)%>
+            </p>
+            <p class="propAddr" style="display:none;"><%=prop.address%></p>
+            <p>S<%=prop.postcode%></p>
+            <p><%=prop.property_type%>, <%=prop.rent_area%></p>
+            <p><i>Listed at: <span><%=prop.updated_at.to_s[0..18]%></span></i></p>
+          </div>
+          <div class="col-md-3">
+            <p><b>$<span class="propPrice"><%=prop.price%></span> /month</b></p>
+            <p>Interests: <span class="propPop"><%=prop.shortlists.length%></span></p>
+            <p style="display:none;"class="propTime">
+              <%=Time.zone.parse(prop.updated_at.to_s).to_i%>
             <p>
-              <p style="display:none;"class="propLat">
-                <%=prop.latitude%>
-                <p>
-                  <p style="display:none;"class="propLng">
-                    <%=prop.longitude%>
-                    <p>
-                    </div>
-
-                  </div>
-
-                  <%end%>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div id="map" style="height:700px;width:100%;"></div>
-              </div>
+            <p style="display:none;"class="propLat">
+              <%=prop.latitude%>
+            <p>
+            <p style="display:none;"class="propLng">
+              <%=prop.longitude%>
+            <p>
+          </div>
+        </div>
+      <%end%>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div id="map" style="height:680px;width:100%;"></div>
+  </div>
 <script>
-
 
   function initMap() {
     var map;
@@ -88,37 +83,53 @@
     }
     var prev_infowindow =false;
 
-    if(<%=@properties.empty?%>){
-      var marker = new google.maps.Marker({
-        position: {lat:1.3046,lng:103.8319},
-        map: map
-      })
-      var infowindow = new google.maps.InfoWindow({
-        content: "Orchard"
-      })
-    }
-    else{
-    <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+      if(!<%=@properties.empty?%>){
+        <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+
       var marker = new google.maps.Marker({
         position: {lat:arr[0],lng:arr[1]},
         map: map
       })
-      var infowindow = new google.maps.InfoWindow({
-        content: arr[2]
-      });
 
-      markerArray.push([marker,arr[2],infowindow])
-      // var closeWindow = true
-      // marker.addListener('mouseover', function() {
-      //     infowindow.setContent(arr[2])
-      //     closeWindow = true
-      //   infowindow.open(map, this)
-      // })
-      // marker.addListener('mouseout', function() {
-      //   if(closeWindow){
-      //     infowindow.close()
-      //   }
-      // })
+      var propPos = new google.maps.LatLng(arr[0], arr[1]);//GOOGLE PLACES
+      var service = new google.maps.places.PlacesService(map); //GOOGLE PLACES
+
+      var request = {  //GOOGLE PLACES
+        location: propPos,
+        radius: '1000',
+        type: "subway_station"
+      };
+
+      var nearbyStation; //GOOGLE PLACES
+      var infoWindowContent //
+      var infowindow
+
+      function googleCb (result,status){
+        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+          console.error(status);
+          return;
+        }
+        console.log("Nearby Search result is: " + result[0].name)
+        nearbyStation = result[0].name
+
+        infoWindowContent = "<p>Address: " + arr[2] + "<br> "+ "Nearest MRT/LRT: " + nearbyStation + "</p>"
+
+        infowindow = new google.maps.InfoWindow({
+          content: infoWindowContent
+        });
+
+        markerArray.push([marker,arr[2],infowindow])
+
+        infowindow.addListener('closeclick', function() {
+          var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+          $otherDiv.show()
+          console.log('closing infowindow ' )
+          // closeWindow = true
+        })
+      }
+
+      service.nearbySearch(request,googleCb)
+
       marker.addListener('click', function() {
         if(prev_infowindow) {
              prev_infowindow.close();
@@ -134,39 +145,27 @@
         }
       })
 
-      infowindow.addListener('closeclick', function() {
-        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.show()
-        console.log('closing infowindow ' )
-        // closeWindow = true
       })
-    })
     }
+
     function centrePin () {
+
       var $propLatitude = parseFloat($(this).find('.propLat').text())
       var $propLongitude = parseFloat($(this).find('.propLng').text())
-      // console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
-      map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
-      var $propAddress = $(this).find('.propAddr').text()
-      var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
-      disableShowHide = true
-      google.maps.event.trigger(relatedMarker, 'click');
+      if(!isNaN($propLatitude) && !isNaN($propLongitude)){
+        map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
+        var $propAddress = $(this).find('.propAddr').text()
+        var relatedMarker = markerArray.find(function(elm){return elm.includes($propAddress)})[0]
+        disableShowHide = true
+        google.maps.event.trigger(relatedMarker, 'click');
+      }
     }
 
     function originalPan(){
-      // console.log("original pan!")
-      //# if(<%=@center_map%>){
-      //   var $propLatitude = 1.384323
-      //   var $propLongitude = 103.826093
-      // }
-      // else{
-      //   var $propLatitude = <%=@geocode[0][0]%>
-      //   var $propLongitude = <%=@geocode[0][1]%>
-      // }
-      // map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
       var $propAddress = $(this).find('.propAddr').text()
+
       var relatedInfoWindow = markerArray.find(function(elm){
         return elm.includes($propAddress)
       })[2]
@@ -194,7 +193,6 @@
         }
       });
 
-
       cb(matches);
     };
   };
@@ -208,7 +206,8 @@
     name: 'all_properties',
     source: substringMatcher(<%=@all_properties.to_json.html_safe%>)
   });
+
 </script>
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&libraries=places&callback=initMap">
 </script>
