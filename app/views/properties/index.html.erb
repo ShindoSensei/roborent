@@ -83,27 +83,52 @@
     var prev_infowindow =false;
 
       if(!<%=@properties.empty?%>){
-    <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+        <%=@geocode.to_json.html_safe%>.forEach(function(arr){
+
       var marker = new google.maps.Marker({
         position: {lat:arr[0],lng:arr[1]},
         map: map
       })
-      var infowindow = new google.maps.InfoWindow({
-        content: arr[2]
-      });
 
-      markerArray.push([marker,arr[2],infowindow])
-      // var closeWindow = true
-      // marker.addListener('mouseover', function() {
-      //     infowindow.setContent(arr[2])
-      //     closeWindow = true
-      //   infowindow.open(map, this)
-      // })
-      // marker.addListener('mouseout', function() {
-      //   if(closeWindow){
-      //     infowindow.close()
-      //   }
-      // })
+      var propPos = new google.maps.LatLng(arr[0], arr[1]);//GOOGLE PLACES
+      var service = new google.maps.places.PlacesService(map); //GOOGLE PLACES
+
+      var request = {  //GOOGLE PLACES
+        location: propPos,
+        radius: '1000',
+        type: "subway_station"
+      };
+
+      var nearbyStation; //GOOGLE PLACES
+      var infoWindowContent //
+      var infowindow
+
+      function googleCb (result,status){
+        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+          console.error(status);
+          return;
+        }
+        console.log("Nearby Search result is: " + result[0].name)
+        nearbyStation = result[0].name
+
+        infoWindowContent = "<p>Address: " + arr[2] + "<br> "+ "Nearest MRT: " + nearbyStation + "</p>"
+
+        infowindow = new google.maps.InfoWindow({
+          content: infoWindowContent
+        });
+
+        markerArray.push([marker,arr[2],infowindow])
+
+        infowindow.addListener('closeclick', function() {
+          var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
+          $otherDiv.show()
+          console.log('closing infowindow ' )
+          // closeWindow = true
+        })
+      }
+
+      service.nearbySearch(request,googleCb)
+
       marker.addListener('click', function() {
         if(prev_infowindow) {
              prev_infowindow.close();
@@ -119,22 +144,14 @@
         }
       })
 
-      infowindow.addListener('closeclick', function() {
-        var $otherDiv = $('div p:contains('+arr[2]+')').parent('div').parent('div').siblings()
-        $otherDiv.show()
-        console.log('closing infowindow ' )
-        // closeWindow = true
       })
-    })
     }
+
     function centrePin () {
 
       var $propLatitude = parseFloat($(this).find('.propLat').text())
       var $propLongitude = parseFloat($(this).find('.propLng').text())
 
-      console.log("Prop latitude is " + $propLatitude)
-      console.log("Prop longitude is " + $propLongitude)
-      // console.log("latitude is "+ $propLatitude + " and longitude is "+ $propLongitude)
       if(!isNaN($propLatitude) && !isNaN($propLongitude)){
         map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
         var $propAddress = $(this).find('.propAddr').text()
@@ -145,23 +162,12 @@
     }
 
     function originalPan(){
-      // console.log("original pan!")
-      //# if(<%=@center_map%>){
-      //   var $propLatitude = 1.384323
-      //   var $propLongitude = 103.826093
-      // }
-      // else{
-      //   var $propLatitude = <%=@geocode[0][0]%>
-      //   var $propLongitude = <%=@geocode[0][1]%>
-      // }
-      // map.panTo(new google.maps.LatLng($propLatitude, $propLongitude))
 
       var $propAddress = $(this).find('.propAddr').text()
-      // console.log("originalPan markerArray is " + markerArray)
+
       var relatedInfoWindow = markerArray.find(function(elm){
         return elm.includes($propAddress)
       })[2]
-      // console.log("originalPan relatedInfoWindow is " + relatedInfoWindow)
 
       disableShowHide = false
       console.log(relatedInfoWindow)
@@ -202,5 +208,5 @@
 
 </script>
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClU-x_i5Nq9B1Q1qRuSJ0_0nKLdf41q8g&libraries=places&callback=initMap">
 </script>

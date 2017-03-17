@@ -8,8 +8,8 @@ class PropertiesController < ApplicationController
     if params[:search]#got search
       p "got search"
       @center_map = true
-      # @properties = Property.search(params[:search]).order("created_at")
-      @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
+      @properties = Property.search(params[:search]).order("created_at")
+      # @properties = (Property.all.sort_by {|prop| prop.shortlists.count}).reverse!
 
       if params[:search].empty? #empty search
         p "got search but empty"
@@ -28,6 +28,7 @@ class PropertiesController < ApplicationController
 
       else #not empty search and not jibberish search, means good search!
         p "good search"
+        @properties = Property.search(params[:search]).order("created_at")
         @center_map = false
         @properties.each do |prop|
           position = [prop.latitude,prop.longitude,prop.address]
