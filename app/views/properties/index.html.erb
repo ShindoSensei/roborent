@@ -1,4 +1,4 @@
-<div class="properties-index">
+<div class="properties-index row">
   <div class="col-md-6">
     <div id="suggestions">
     <%= form_tag(properties_path, :method => "get", id: "search-form") do %>
@@ -60,6 +60,7 @@
   <div class="col-md-6">
     <div id="map" style="height:680px;width:100%;"></div>
   </div>
+</div>
 <script>
 
   function initMap() {

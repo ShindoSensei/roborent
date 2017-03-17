@@ -90,6 +90,9 @@ button.btn.btn-sm.dropdown-toggle {
   text-transform: none;
   font-size: small;
 }
+h1 span {
+  background-color: #F05F40;
+}
 .alert {
   margin-top: 20px;
 }
@@ -100,6 +103,8 @@ button.btn.btn-sm.dropdown-toggle {
   text-align: center;
   font-weight: 300;
   margin-bottom: 20px;
+  margin-top: 20px;
+  bottom: 0;
 }
 .tt-input,
 .tt-hint {
